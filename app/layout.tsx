@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
-import { Bricolage_Grotesque, Geist, Geist_Mono, Inter } from "next/font/google";
+import { Bricolage_Grotesque, Inter } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "@/components/theme-provider";
 
 export const fontSans = Inter({
   subsets: ["latin"],
@@ -21,11 +22,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning >
       <body
         className={`${fontSans.className} antialiased`}
       >
-        {children}
+        <ThemeProvider
+            attribute="class"
+            defaultTheme="dark"
+            enableSystem
+            disableTransitionOnChange
+          >
+            {children}
+          </ThemeProvider>
       </body>
     </html>
   );
