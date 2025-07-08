@@ -4,17 +4,21 @@ import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import React from 'react'
 import { cn } from '@/lib/utils'
+import { useSession } from 'next-auth/react'
 
 const menuItems = [
     { name: 'Features', href: '#link' },
     { name: 'Solution', href: '#link' },
     { name: 'Pricing', href: '#link' },
-    { name: 'About', href: '#link' },
+    { name: 'About', href: '#team' },
 ]
 
 export const HeroHeader = () => {
     const [menuState, setMenuState] = React.useState(false)
     const [isScrolled, setIsScrolled] = React.useState(false)
+    const {data:session} = useSession()
+    const isLoggedIn = (session?.user)!!
+    
 
     React.useEffect(() => {
         const handleScroll = () => {
@@ -75,23 +79,27 @@ export const HeroHeader = () => {
                                     ))}
                                 </ul>
                             </div>
+                            
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className={cn(isScrolled && 'lg:hidden')}>
-                                    <Link href="/auth">
-                                        <span>Sign Up</span>
-                                    </Link>
-                                </Button>
-                                <Button
-                                    asChild
-                                    size="sm"
-                                    className={cn(isScrolled ? 'lg:inline-flex' : 'hidden')}>
-                                    <Link href="/auth">
-                                        <span>Sign Up</span>
-                                    </Link>
-                                </Button>
+                                {
+                                    isLoggedIn ?(
+                                        <Button
+                                            asChild
+                                            size="sm">
+                                            <Link href="/dashboard">
+                                                <span>Dashboard</span>
+                                            </Link>
+                                        </Button>
+                                    ):(
+                                         <Button
+                                            asChild
+                                            size="sm">
+                                            <Link href="/auth">
+                                                <span>Sign Up</span>
+                                            </Link>
+                                        </Button>
+                                    )
+                                }
                             </div>
                         </div>
                     </div>

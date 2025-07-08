@@ -1,3 +1,4 @@
+import { signIn } from '@/auth';
 import { Button } from '@/components/ui/button'
 import Link from 'next/link'
 
@@ -5,7 +6,10 @@ export default function LoginPage() {
     return (
         <section className="flex min-h-screen bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent">
             <form
-                action=""
+                    action={async () => {
+                      "use server";
+                      await signIn("google");
+                    }}
                 className="max-w-92 m-auto h-fit w-full">
                 <div className="p-6">
                     <div>
@@ -22,7 +26,7 @@ export default function LoginPage() {
 
                     <div className="mt-6">
                         <Button
-                            type="button"
+                            type="submit"
                             variant="outline"
                             className="w-full cursor-pointer">
                             <svg

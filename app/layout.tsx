@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
 import "./globals.css";
-import { ThemeProvider } from "@/components/theme-provider";
+import { Provider } from "@/components/provider";
 
 export const fontSans = Inter({
   subsets: ["latin"],
@@ -26,14 +26,14 @@ export default function RootLayout({
       <body
         className={`${fontSans.className} antialiased`}
       >
-        <ThemeProvider
+        <Provider
             attribute="class"
             defaultTheme="dark"
             enableSystem
             disableTransitionOnChange
           >
             {children}
-          </ThemeProvider>
+          </Provider>
       </body>
     </html>
   );
