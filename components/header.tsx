@@ -7,10 +7,10 @@ import { cn } from '@/lib/utils'
 import { useSession } from 'next-auth/react'
 
 const menuItems = [
-    { name: 'Features', href: '#link' },
-    { name: 'Solution', href: '#link' },
-    { name: 'Pricing', href: '#link' },
-    { name: 'About', href: '#team' },
+    { name: 'Why Us', href: '#why' },
+    { name: 'Stats', href: '#stats' },
+    { name: 'Features', href: '#features' },
+    { name: 'Team', href: '#team' },
 ]
 
 export const HeroHeader = () => {
@@ -86,8 +86,8 @@ export const HeroHeader = () => {
                                         <Button
                                             asChild
                                             size="sm">
-                                            <Link href="/dashboard">
-                                                <span>Dashboard</span>
+                                            <Link href="/explore">
+                                                <span>Explore</span>
                                             </Link>
                                         </Button>
                                     ):(

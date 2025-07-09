@@ -71,7 +71,7 @@ export default async function HeroSection() {
                                     ...transitionVariants,
                                 }}
                                 className="mt-7">
-                                <Link href={isLoggedIn?'/dashboard':'/auth'}>
+                                <Link href={isLoggedIn?'/explore':'/auth'}>
                                     <div className="z-10 flex items-center justify-center">
                                         <div
                                             className={cn(
