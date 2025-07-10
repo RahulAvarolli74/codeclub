@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Bricolage_Grotesque, Inter } from "next/font/google";
 import "./globals.css";
 import { Provider } from "@/components/provider";
+import { Toaster } from "sonner";
 
 export const fontSans = Inter({
   subsets: ["latin"],
@@ -33,7 +34,8 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             {children}
-          </Provider>
+        </Provider>
+        <Toaster />
       </body>
     </html>
   );

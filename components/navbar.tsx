@@ -16,6 +16,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { useSession } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { ModeToggle } from "./theme-toggle"
+import { NavUser } from "./nav-user"
 
 // Navigation links array to be used in both desktop and mobile menus
 const navigationLinks = [
@@ -110,12 +111,13 @@ export default function Component() {
         {/* Right side */}
         <div className="flex items-center gap-2">
           <ModeToggle />
-            <div className="w-9 h-auto overflow-hidden rounded-md">
+            {/* <div className="w-9 h-auto overflow-hidden rounded-md">
                 <Avatar>
                     <AvatarImage src={session?.user?.image ||""} alt={session?.user?.name || ""} />
                     <AvatarFallback>{session?.user?.name}</AvatarFallback>
                 </Avatar>
-            </div>
+            </div> */}
+            <NavUser user={{name: session?.user?.name || "User", email: session?.user?.email || "", avatar: session?.user?.image || ""}} />
         </div>
       </div>
     </header>

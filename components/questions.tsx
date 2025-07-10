@@ -1,17 +1,23 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import {  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import {  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, User } from "lucide-react"
 import { allProblems } from "@/constants/questions"
 import { CodeforcesConnect } from "./connect-codeforces"
+import { useSession } from "next-auth/react"
 
 
 export default function ProblemTracker() {
+  const {data:session} = useSession()
+  console.log("Session Data:", session?.user);
+  
+  const isCfHandleAvailable = session?.user?.cfHandle !== null
+  
   const [activeFilter, setActiveFilter] = useState("all")
   const [currentPage, setCurrentPage] = useState(1)
   const itemsPerPage = 20
@@ -190,9 +196,17 @@ export default function ProblemTracker() {
                 </CardDescription>
               </div>
               <div>
-                <div>
-                  <CodeforcesConnect />
-                </div>
+                {isCfHandleAvailable ? 
+                  <div className="flex items-center gap-2">
+                    <Button variant="outline" className="flex items-center gap-2 bg-transparent">
+                      <User className="h-4 w-4" />
+                      {session?.user?.cfHandle}
+                    </Button>
+                  </div>
+                  :<div>
+                    <CodeforcesConnect />
+                  </div>
+                }
               </div>
             </div>
           </CardHeader>
