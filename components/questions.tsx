@@ -6,77 +6,10 @@ import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { BadgePlus, ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
-import { Separator } from "./ui/separator"
+import {  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight } from "lucide-react"
+import { allProblems } from "@/constants/questions"
+import { CodeforcesConnect } from "./connect-codeforces"
 
-const allProblems = [
-  { id: 1, name: "Two Sum", level: 1, completed: false },
-  { id: 2, name: "Valid Parentheses", level: 1, completed: true },
-  { id: 3, name: "Merge Two Sorted Lists", level: 1, completed: true },
-  { id: 4, name: "Best Time to Buy Stock", level: 1, completed: false },
-  { id: 5, name: "Valid Palindrome", level: 1, completed: false },
-  { id: 6, name: "Binary Search", level: 1, completed: false },
-  { id: 7, name: "Reverse Linked List", level: 1, completed: true },
-  { id: 8, name: "Maximum Subarray", level: 1, completed: false },
-  { id: 9, name: "Contains Duplicate", level: 1, completed: true },
-  { id: 10, name: "Product of Array Except Self", level: 1, completed: false },
-  { id: 11, name: "3Sum", level: 1, completed: false },
-  { id: 12, name: "Container With Most Water", level: 1, completed: true },
-  { id: 13, name: "Find Minimum in Rotated Sorted Array", level: 1, completed: false },
-  { id: 14, name: "Longest Substring Without Repeating Characters", level: 1, completed: false },
-  { id: 15, name: "Number of 1 Bits", level: 1, completed: true },
-  { id: 16, name: "Climbing Stairs", level: 1, completed: true },
-  { id: 17, name: "Coin Change", level: 1, completed: false },
-  { id: 18, name: "House Robber", level: 1, completed: true },
-  { id: 19, name: "Longest Palindromic Substring", level: 1, completed: false },
-  { id: 20, name: "Valid Anagram", level: 1, completed: true },
-  { id: 21, name: "Group Anagrams", level: 1, completed: false },
-  { id: 22, name: "Top K Frequent Elements", level: 1, completed: false },
-  { id: 23, name: "Encode and Decode Strings", level: 1, completed: true },
-  { id: 24, name: "Halloumi Boxes", level: 2, completed: true },
-  { id: 25, name: "Line Trip", level: 2, completed: true },
-  { id: 26, name: "Cover in Water", level: 2, completed: true },
-  { id: 27, name: "Game with Integers", level: 2, completed: true },
-  { id: 28, name: "Jagged Swaps", level: 2, completed: true },
-  { id: 29, name: "Sliding Window Maximum", level: 2, completed: false },
-  { id: 30, name: "Longest Increasing Subsequence", level: 2, completed: false },
-  { id: 31, name: "Word Break", level: 2, completed: true },
-  { id: 32, name: "Combination Sum", level: 2, completed: false },
-  { id: 33, name: "Word Search", level: 2, completed: false },
-  { id: 34, name: "Rotate Image", level: 2, completed: true },
-  { id: 35, name: "Spiral Matrix", level: 2, completed: false },
-  { id: 36, name: "Jump Game", level: 2, completed: true },
-  { id: 37, name: "Merge Intervals", level: 2, completed: false },
-  { id: 38, name: "Insert Interval", level: 2, completed: false },
-  { id: 39, name: "Non-overlapping Intervals", level: 2, completed: true },
-  { id: 40, name: "Meeting Rooms", level: 2, completed: true },
-  { id: 41, name: "Validate Binary Search Tree", level: 2, completed: false },
-  { id: 42, name: "Kth Smallest Element in BST", level: 2, completed: false },
-  { id: 43, name: "Lowest Common Ancestor of BST", level: 2, completed: true },
-  { id: 44, name: "Implement Trie", level: 2, completed: false },
-  { id: 45, name: "Design Add and Search Words Data Structure", level: 2, completed: false },
-  { id: 46, name: "Word Search II", level: 2, completed: false },
-  { id: 47, name: "Course Schedule", level: 2, completed: true },
-  { id: 48, name: "Course Schedule II", level: 2, completed: false },
-  { id: 49, name: "Number of Islands", level: 2, completed: true },
-  { id: 50, name: "Clone Graph", level: 2, completed: false },
-  { id: 51, name: "Pacific Atlantic Water Flow", level: 2, completed: false },
-  { id: 52, name: "Surrounded Regions", level: 2, completed: true },
-  { id: 53, name: "Rotting Oranges", level: 2, completed: false },
-  { id: 54, name: "Walls and Gates", level: 2, completed: false },
-  { id: 55, name: "Longest Consecutive Sequence", level: 2, completed: true },
-  { id: 56, name: "Alien Dictionary", level: 2, completed: false },
-  { id: 57, name: "Graph Valid Tree", level: 2, completed: false },
-  { id: 58, name: "Number of Connected Components", level: 2, completed: true },
-  { id: 59, name: "Subtree of Another Tree", level: 2, completed: false },
-  { id: 60, name: "Construct Binary Tree from Preorder and Inorder", level: 2, completed: false },
-  { id: 61, name: "Maximum Depth of Binary Tree", level: 2, completed: true },
-  { id: 62, name: "Same Tree", level: 2, completed: true },
-  { id: 63, name: "Invert Binary Tree", level: 2, completed: true },
-  { id: 64, name: "Binary Tree Maximum Path Sum", level: 2, completed: false },
-  { id: 65, name: "Binary Tree Level Order Traversal", level: 2, completed: false },
-  { id: 66, name: "Serialize and Deserialize Binary Tree", level: 2, completed: false },
-]
 
 export default function ProblemTracker() {
   const [activeFilter, setActiveFilter] = useState("all")
@@ -257,10 +190,9 @@ export default function ProblemTracker() {
                 </CardDescription>
               </div>
               <div>
-                <Button>
-                  <BadgePlus />
-                  Connect Codeforces
-                </Button>
+                <div>
+                  <CodeforcesConnect />
+                </div>
               </div>
             </div>
           </CardHeader>
@@ -276,8 +208,10 @@ export default function ProblemTracker() {
               <TableBody>
                 {currentProblems.map((problem, index) => (
                   <TableRow key={problem.id} className={problem.completed ? "bg-emerald-300/20" : ""}>
-                    <TableCell className="font-medium">
-                      {startIndex + index + 1}. {problem.name}
+                    <TableCell className="font-medium cursor-pointer">
+                      <a href="https://codeforces.com/problemset/problem/1/A" target="_blank" rel="noopener noreferrer">
+                        {startIndex + index + 1}. {problem.name}
+                      </a>
                     </TableCell>
                     <TableCell className="text-center">
                       <Badge variant={problem.level === 1 ? "secondary" : "outline"} className="text-xs">
