@@ -83,84 +83,101 @@ export default function ProblemTracker() {
 
   const handleFilterChange = (value:any) => {
     setActiveFilter(value)
-    setCurrentPage(1) // Reset to first page when filter changes
+    setCurrentPage(1)
   }
 
   const handlePageChange = (page:any) => {
     setCurrentPage(page)
   }
 
-  const Pagination = () => {
-    const getPageNumbers = () => {
-      const pages = []
-      const maxVisiblePages = window.innerWidth < 768 ? 3 : 5 // Fewer pages on mobile
-      let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
-      let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+const Pagination = () => {
+  const [isMobile, setIsMobile] = useState(false)
 
-      if (endPage - startPage + 1 < maxVisiblePages) {
-        startPage = Math.max(1, endPage - maxVisiblePages + 1)
-      }
+  useEffect(() => {
+    // Check if we're on the client side and set initial value
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768)
+    }
+    
+    checkMobile()
+    
+    // Add event listener for window resize
+    window.addEventListener('resize', checkMobile)
+    
+    // Cleanup
+    return () => window.removeEventListener('resize', checkMobile)
+  }, [])
 
-      for (let i = startPage; i <= endPage; i++) {
-        pages.push(i)
-      }
-      return pages
+  const getPageNumbers = () => {
+    const pages = []
+    const maxVisiblePages = isMobile ? 3 : 5 // Fewer pages on mobile
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2))
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1)
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1)
     }
 
-    return (
-      <div className="flex items-center justify-center space-x-1 sm:space-x-2 py-4 w-full">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(1)}
-          disabled={currentPage === 1}
-          className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-        >
-          <ChevronsLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage - 1)}
-          disabled={currentPage === 1}
-          className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-        >
-          <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
-        
-        {getPageNumbers().map((page) => (
-          <Button
-            key={page}
-            variant={currentPage === page ? "default" : "outline"}
-            size="sm"
-            onClick={() => handlePageChange(page)}
-            className="h-8 w-8 p-0 sm:h-9 sm:w-9 text-xs sm:text-sm"
-          >
-            {page}
-          </Button>
-        ))}
-        
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(currentPage + 1)}
-          disabled={currentPage === totalPages}
-          className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-        >
-          <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => handlePageChange(totalPages)}
-          disabled={currentPage === totalPages}
-          className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-        >
-          <ChevronsRight className="h-3 w-3 sm:h-4 sm:w-4" />
-        </Button>
-      </div>
-    )
+    for (let i = startPage; i <= endPage; i++) {
+      pages.push(i)
+    }
+    return pages
   }
+
+  return (
+    <div className="flex items-center justify-center space-x-1 sm:space-x-2 py-4 w-full">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handlePageChange(1)}
+        disabled={currentPage === 1}
+        className="h-8 w-8 p-0 sm:h-9 sm:w-9"
+      >
+        <ChevronsLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handlePageChange(currentPage - 1)}
+        disabled={currentPage === 1}
+        className="h-8 w-8 p-0 sm:h-9 sm:w-9"
+      >
+        <ChevronLeft className="h-3 w-3 sm:h-4 sm:w-4" />
+      </Button>
+      
+      {getPageNumbers().map((page) => (
+        <Button
+          key={page}
+          variant={currentPage === page ? "default" : "outline"}
+          size="sm"
+          onClick={() => handlePageChange(page)}
+          className="h-8 w-8 p-0 sm:h-9 sm:w-9 text-xs sm:text-sm"
+        >
+          {page}
+        </Button>
+      ))}
+      
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handlePageChange(currentPage + 1)}
+        disabled={currentPage === totalPages}
+        className="h-8 w-8 p-0 sm:h-9 sm:w-9"
+      >
+        <ChevronRight className="h-3 w-3 sm:h-4 sm:w-4" />
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => handlePageChange(totalPages)}
+        disabled={currentPage === totalPages}
+        className="h-8 w-8 p-0 sm:h-9 sm:w-9"
+      >
+        <ChevronsRight className="h-3 w-3 sm:h-4 sm:w-4" />
+      </Button>
+    </div>
+  )
+}
 
   return (
     <div className="min-h-screen p-3 sm:p-6">
