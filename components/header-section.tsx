@@ -3,11 +3,15 @@ import { TextEffect } from '@/components/motion-primitives/text-effect'
 import { AnimatedGroup } from '@/components/motion-primitives/animated-group'
 import { HeroHeader } from "@/components/header"
 import { cn } from '@/lib/utils'
-import { fontHeading } from '@/app/layout'
 import { AnimatedShinyText } from "@/components/animate-shiny-text";
 import { ArrowRightIcon } from 'lucide-react'
 import { auth } from '@/auth'
 import Link from 'next/link'
+import { Bricolage_Grotesque } from 'next/font/google'
+
+const fontHeading = Bricolage_Grotesque({
+  subsets: ["latin"],
+});
 
 
 const transitionVariants = {

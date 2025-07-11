@@ -4,13 +4,10 @@ import "./globals.css";
 import { Provider } from "@/components/provider";
 import { Toaster } from "sonner";
 
-export const fontSans = Inter({
+const fontSans = Inter({
   subsets: ["latin"],
 })
 
-export const fontHeading = Bricolage_Grotesque({
-  subsets: ["latin"],
-});
 
 export const metadata: Metadata = {
   title: "Create Next App",

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import {  ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, User } from "lucide-react"
-import { allProblems } from "@/constants/questions"
+import { questions } from "@/data/questions"
 import { CodeforcesConnect } from "./connect-codeforces"
 import { useSession } from "next-auth/react"
 
@@ -24,12 +24,12 @@ export default function ProblemTracker() {
 
   const getFilteredProblems = () => {
     if (activeFilter === "level1") {
-      return allProblems.filter((p) => p.level === 1)
+      return questions.filter((p) => p.level === 1)
     }
     if (activeFilter === "level2") {
-      return allProblems.filter((p) => p.level === 2)
+      return questions.filter((p) => p.level === 2)
     }
-    return allProblems
+    return questions
   }
 
   const filteredProblems = getFilteredProblems()
