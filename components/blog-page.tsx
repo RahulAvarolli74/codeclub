@@ -34,24 +34,25 @@ const BlogPost = ({ blogId }: { blogId: string }) => {
     // Optional: POST to backend to sync like state
   };
 
-  useEffect(() => {
-    const fetchBlogPost = async () => {
-      setIsLoading(true);
-      try {
-        const response = await axios.get<any>(`/api/blog/${blogId}`);
-        const data = response.data;
-        setBlogData(data);
-        setIsLiked(data.isLiked);
-        setLikeCount(data.likeCount);
-      } catch (error) {
-        console.error("Error fetching blog post:", error);
-        toast.error("Failed to load blog post.");
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    fetchBlogPost();
+  const fetchBlogPost = React.useCallback(async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get<any>(`/api/blog/${blogId}`);
+      const data = response.data;
+      setBlogData(data);
+      setIsLiked(data.isLiked);
+      setLikeCount(data.likeCount);
+    } catch (error) {
+      console.error("Error fetching blog post:", error);
+      toast.error("Failed to load blog post.");
+    } finally {
+      setIsLoading(false);
+    }
   }, [blogId]);
+
+  useEffect(() => {
+    fetchBlogPost();
+  }, [fetchBlogPost, blogId]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);

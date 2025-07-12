@@ -1,10 +1,10 @@
 "use client"
-import { MessageSquare, ChevronUp, TrendingUp, SquarePen } from "lucide-react"
+import { MessageSquare, ChevronUp, TrendingUp, SquarePen, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import axios from "axios"
 import { Skeleton } from "./ui/skeleton"
 
@@ -21,6 +21,7 @@ interface Post {
   likeCount: number
   createdAt: string
   updatedAt: string
+  isLiked: boolean
 }
 
 // Helper function to strip HTML tags from content
@@ -51,30 +52,53 @@ export default function TopBlogs() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  useEffect(() => {
-    const fetchPosts = async () => {
-      try {
-        setLoading(true)
-        const response = await axios.get<Post[]>('/api/blog/all')
-        console.log(response.data)
-        
-        // Sort by likeCount in descending order and take top 3
-        const sortedPosts = response.data
-          .sort((a, b) => b.likeCount - a.likeCount)
-          .slice(0, 3)
-        
-        setPosts(sortedPosts)
-        setError(null)
-      } catch (err) {
-        console.error('Error fetching posts:', err)
-        setError('Failed to load posts')
-      } finally {
-        setLoading(false)
+  const handleLike = async (blogId: string, currentIsLiked: boolean) => {
+    try {
+      const response = await axios.post('/api/blog/like', { blogId })
+      
+      if (response.status === 200) {
+        // Update the posts state to reflect the like/unlike
+        setPosts(prevPosts => 
+          prevPosts.map(post => 
+            post.id === blogId 
+              ? { 
+                  ...post, 
+                  isLiked: !currentIsLiked,
+                  likeCount: currentIsLiked ? post.likeCount - 1 : post.likeCount + 1
+                }
+              : post
+          )
+        )
       }
+    } catch (err) {
+      console.error('Error toggling like:', err)
     }
-    
+  }
+
+const fetchPosts =useCallback( async () => {
+    try {
+      setLoading(true)
+      const response = await axios.get<Post[]>('/api/blog/all')
+      console.log(response.data)
+      
+      // Sort by likeCount in descending order and take top 3
+      const sortedPosts = response.data
+        .sort((a, b) => b.likeCount - a.likeCount)
+        .slice(0, 3)
+      
+      setPosts(sortedPosts)
+      setError(null)
+    } catch (err) {
+      console.error('Error fetching posts:', err)
+      setError('Failed to load posts')
+    } finally {
+      setLoading(false)
+    }
+  },[])
+
+  useEffect(() => {
     fetchPosts()
-  }, [])
+  }, [fetchPosts])
 
   if (loading) {
   return (
@@ -182,15 +206,21 @@ export default function TopBlogs() {
                     </p>
 
                     <div className="flex items-center gap-6">
-                      <div className="flex items-center gap-2 text-neutral-500 cursor-pointer">
-                        <ChevronUp className="w-4 h-4" />
-                        <span className="text-sm font-medium">{post.likeCount}</span>
-                      </div>
-
-                      <div className="flex items-center gap-2 text-neutral-500 cursor-pointer">
-                        <MessageSquare className="w-4 h-4" />
-                        <span className="text-sm font-medium">0</span>
-                      </div>
+                      <button
+                        onClick={()=>handleLike(post.id, post.isLiked)}
+                        className="flex items-center space-x-2 group"
+                      >
+                        <Heart
+                          className={`w-4 h-4 transition-colors ${
+                            post.isLiked
+                              ? "fill-red-500 text-red-500"
+                              : "text-muted-foreground group-hover:text-red-500"
+                          }`}
+                        />
+                        <span className="text-muted-foreground group-hover:text-red-500">
+                          {post.likeCount}
+                        </span>
+                      </button>
                     </div>
                   </div>
                 </div>

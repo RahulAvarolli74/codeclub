@@ -77,7 +77,7 @@ export default function Component() {
 
   return (
     <div className="p-4 md:p-8 ">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-5xl mx-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course, index) => (
             <Card key={index} className="relative overflow-hidden border-0 shadow-xl rounded-2xl p-0">
@@ -98,7 +98,7 @@ export default function Component() {
                         size="icon"
                         className="w-12 h-12 bg-white/90 backdrop-blur-sm text-gray-700 hover:bg-white hover:scale-105 transition-all duration-200 rounded-full shadow-lg border-0"
                       >
-                        <ChevronRight className="w-5 h-5" />
+                        <ChevronRight className="w-6 h-6" />
                       </Button>
                     </Link>
                   </div>
