@@ -1,7 +1,8 @@
-import { MessageSquare, ChevronUp, TrendingUp } from "lucide-react"
+import { MessageSquare, ChevronUp, TrendingUp, SquarePen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card } from "@/components/ui/card"
+import Link from "next/link"
 
 export default function TopBlogs() {
   const posts = [
@@ -50,13 +51,17 @@ export default function TopBlogs() {
 
   return (
     <div className="">
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-5xl mx-auto p-6">
         {/* Header */}
-        <div className="mb-8">
+        <div className="mb-8 flex items-center justify-between">
           <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
             <TrendingUp className="w-5 h-5" />
             <span className="text-lg font-medium">Most Popular Blogs</span>
           </Button>
+          <Link href="/blogs/new" className="flex gap-2">
+            <SquarePen />
+              Write
+          </Link>
         </div>
 
         {/* Posts */}

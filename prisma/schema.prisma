@@ -22,6 +22,8 @@ model User {
   image         String?
   cfHandle     String? @unique
   accounts      Account[]
+  blogs         Blog[]
+  likes         Like[]
  
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -46,4 +48,33 @@ model Account {
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@id([provider, providerAccountId])
+}
+
+
+model Blog {
+  id        String   @id @default(cuid())
+  title     String
+  content   String
+  authorId  String
+  likes     Like[]
+  likeCount Int      @default(0)
+  author    User     @relation(fields: [authorId], references: [id], onDelete: Cascade)
+  
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ 
+  @@index([authorId])
+}
+
+model Like {
+  id        String   @id @default(cuid())
+  blogId    String
+  userId    String
+  blog      Blog     @relation(fields: [blogId], references: [id], onDelete: Cascade)
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  createdAt DateTime @default(now())
+ 
+  @@unique([blogId, userId])
 }

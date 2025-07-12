@@ -14,7 +14,6 @@ import {
   ListOrdered,
   Quote,
   Eye,
-  Save,
   Send,
   Highlighter,
   AlignLeft,
@@ -23,13 +22,16 @@ import {
   Heading1,
   Heading2,
   Heading3,
+  ChevronLeft,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { useSession } from "next-auth/react"
 
 export default function CreateBlog() {
+  const { data : session } = useSession();
   const [title, setTitle] = useState("")
   const [wordCount, setWordCount] = useState(0)
   const [isPreview, setIsPreview] = useState(false)
@@ -39,7 +41,7 @@ export default function CreateBlog() {
     extensions: [
       StarterKit,
       Placeholder.configure({
-        placeholder: "Tell your story...",
+        placeholder: "Write your blog...",
       }),
       TextAlign.configure({
         types: ["heading", "paragraph"],
@@ -84,13 +86,7 @@ export default function CreateBlog() {
     })
   }
 
-  const handleSaveDraft = () => {
-    console.log("Saving draft:", {
-      title,
-      content: editor?.getHTML(),
-    })
-    setLastSaved(new Date())
-  }
+  
 
   if (!editor) {
     return <div>Loading editor...</div>
@@ -103,13 +99,10 @@ export default function CreateBlog() {
           {/* Preview Header */}
           <div className="flex items-center justify-between mb-8">
             <Button variant="ghost" onClick={() => setIsPreview(false)} className="text-neutral-500">
-              ← Back to Editor
+              <ChevronLeft />
+              Back to Editor
             </Button>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={handleSaveDraft}>
-                <Save className="w-4 h-4 mr-2" />
-                Save Draft
-              </Button>
               <Button onClick={handlePublish}>
                 <Send className="w-4 h-4 mr-2" />
                 Publish
@@ -122,12 +115,12 @@ export default function CreateBlog() {
             <h1 className="text-4xl font-bold mb-4">{title || "Untitled"}</h1>
 
             <div className="flex items-center gap-3 mb-8">
-              <Avatar className="w-10 h-10">
-                <AvatarImage src="/placeholder.svg?height=40&width=40" />
-                <AvatarFallback>AU</AvatarFallback>
+              <Avatar className="h-10 w-10">
+                <AvatarImage src={session?.user.image as string} alt={session?.user.name as string} />
+                <AvatarFallback>{session?.user.name?.charAt(0) || "U"}</AvatarFallback>
               </Avatar>
               <div>
-                <p className="text-sm font-medium">Anonymous User</p>
+                <p className="text-sm font-medium">{session?.user.name}</p>
                 <p className="text-xs text-neutral-500">Just now</p>
               </div>
             </div>
@@ -164,10 +157,10 @@ export default function CreateBlog() {
         {/* Title Input */}
         <div className="mb-6">
           <Input
-            placeholder="Title"
+            placeholder="Title..."
             value={title}
             onChange={(e) => setTitle(e.target.value)}
-            className="text-5xl font-bold border-0 px-0 py-2 placeholder:text-neutral-400 focus-visible:ring-0 shadow-none"
+            className="text-3xl md:text-4xl font-bold border-0 px-0 py-2 placeholder:text-neutral-400 focus-visible:ring-2 shadow-none p-6 md:p-10"
           />
         </div>
 
@@ -202,7 +195,7 @@ export default function CreateBlog() {
             <Highlighter className="w-4 h-4" />
           </Button>
 
-          <Separator orientation="vertical" className="h-6 mx-1" />
+          <Separator orientation="vertical" className="h-6 wx-2" />
 
           {/* Headings */}
           <Button
