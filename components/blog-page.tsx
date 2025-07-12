@@ -28,10 +28,21 @@ const BlogPost = ({ blogId }: { blogId: string }) => {
   const [likeCount, setLikeCount] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
 
-  const handleLike = () => {
+  const handleLike = async() => {
     setIsLiked((prev) => !prev);
     setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
     // Optional: POST to backend to sync like state
+    try {
+      const response = await axios.post<any>('/api/blog/like', { blogId })
+      setIsLiked(response.data.isLiked);
+      if(!response.data) {
+        setIsLiked((prev) => !prev);
+        setLikeCount((prev) => (isLiked ? prev + 1 : prev - 1));
+      }
+    } catch (error) {
+      setIsLiked((prev) => !prev);
+      setLikeCount((prev) => (isLiked ? prev + 1 : prev - 1));
+    }
   };
 
   const fetchBlogPost = React.useCallback(async () => {

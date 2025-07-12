@@ -1,8 +1,11 @@
 import { auth } from "@/auth";
 import db from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
 
+// Ensure this API route runs in Node.js runtime
+export const runtime = 'nodejs';
 
-export async function POST(request:Request){
+export async function POST(request: NextRequest) {
     const session = await auth();
     if(!session?.user) {
         return new Response("Unauthorized", { status: 401 });

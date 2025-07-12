@@ -1,13 +1,33 @@
 import { auth } from "@/auth";
 import db from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
 
-export async function GET(_: Request, { params }: { params: Promise<{ blogId: string }> }) {
-    const { blogId } = await params;
-    const session = await auth();
-    if (!session?.user?.cfHandle) {
-        return new Response("Unauthorized", { status: 401 });
-    }
+// Ensure this API route runs in Node.js runtime
+export const runtime = 'nodejs';
+
+export async function GET(
+    request: NextRequest, 
+    { params }: { params: Promise<{ blogId: string }> }
+) {
     try {
+        const { blogId } = await params;
+        
+        // Validate blogId parameter
+        if (!blogId || typeof blogId !== 'string') {
+            return NextResponse.json(
+                { error: "Invalid blog ID" },
+                { status: 400 }
+            );
+        }
+
+        const session = await auth();
+        if (!session?.user?.cfHandle) {
+            return NextResponse.json(
+                { error: "Unauthorized" },
+                { status: 401 }
+            );
+        }
+
         const blog = await db.blog.findUnique({
             where: {
                 id: blogId,
@@ -24,7 +44,10 @@ export async function GET(_: Request, { params }: { params: Promise<{ blogId: st
         });
 
         if (!blog) {
-            return new Response("Blog post not found", { status: 404 });
+            return NextResponse.json(
+                { error: "Blog post not found" },
+                { status: 404 }
+            );
         }
 
         const isLikedByUser = await db.like.findFirst({
@@ -34,20 +57,16 @@ export async function GET(_: Request, { params }: { params: Promise<{ blogId: st
             }
         });
 
-        return new Response(JSON.stringify({
+        return NextResponse.json({
             ...blog,
             isLiked: !!isLikedByUser,
-        }), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
-
+        }, { status: 200 });
 
     } catch (error) {
-        console.log("Error fetching blog post:", error);
-        return new Response("Internal Server Error", { status: 500 });
+        console.error("Error fetching blog post:", error);
+        return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
     }
-
 }

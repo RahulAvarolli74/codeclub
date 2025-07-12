@@ -1,18 +1,28 @@
 import { auth } from "@/auth";
 import db from "@/lib/db";
+import { NextRequest, NextResponse } from "next/server";
 
+// Ensure this API route runs in Node.js runtime
+export const runtime = 'nodejs';
 
-export async function POST(request: Request) {
+export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session?.user?.cfHandle) {
-        return new Response("Unauthorized", { status: 401 });
+        return NextResponse.json(
+            { error: "Unauthorized" },
+            { status: 401 }
+        );
     }
 
     try {
         const userId = session.user.id;
         const {title, content} = await request.json();
+        
         if (!title || !content) {
-            return new Response("Title and content are required", { status: 400 });
+            return NextResponse.json(
+                { error: "Title and content are required" },
+                { status: 400 }
+            );
         }
 
         const newBlog = await db.blog.create({
@@ -23,15 +33,13 @@ export async function POST(request: Request) {
             }
         })
 
-        return new Response(JSON.stringify(newBlog), {
-            status: 201,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        return NextResponse.json(newBlog, { status: 201 });
 
     } catch (error) {
         console.error("Error creating blog post:", error);
-        return new Response("Internal Server Error", { status: 500 });
+        return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
     }
 }

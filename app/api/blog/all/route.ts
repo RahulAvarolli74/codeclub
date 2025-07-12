@@ -1,11 +1,15 @@
 import { auth } from "@/auth";
 import db from "@/lib/db";
+import { NextResponse } from "next/server";
+
+// Ensure this API route runs in Node.js runtime
+export const runtime = 'nodejs';
 
 export async function GET() {
   const session = await auth();
 
   const user = session?.user;
-  if (!user?.cfHandle) {
+  if (!user) {
     return new Response("Unauthorized", { status: 401 });
   }
 
@@ -13,7 +17,7 @@ export async function GET() {
     // Get user from DB
     const dbUser = await db.user.findUnique({
       where: {
-        cfHandle: user.cfHandle,
+        id: user.id,
       },
       select: {
         id: true,

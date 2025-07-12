@@ -14,7 +14,7 @@ import { useSession } from "next-auth/react"
 
 export default function ProblemTracker() {
   const {data:session} = useSession()
-  console.log("Session Data:", session?.user);
+  // console.log("Session Data:", session?.user);
   
   const isCfHandleAvailable = session?.user?.cfHandle !== null
   
@@ -35,8 +35,6 @@ export default function ProblemTracker() {
         const data = await response.json()
         // Update the questions with the latest completion status
         setUpdatedQuestions(data)
-      } else {
-        console.log('Failed to fetch solved problems')
       }
     } catch (error) {
       console.error('Error fetching solved problems:', error)

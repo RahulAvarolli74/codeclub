@@ -53,6 +53,7 @@ export default function TopBlogs() {
   const [error, setError] = useState<string | null>(null)
 
   const handleLike = async (blogId: string, currentIsLiked: boolean) => {
+    
     try {
       const response = await axios.post('/api/blog/like', { blogId })
       
@@ -79,7 +80,7 @@ const fetchPosts =useCallback( async () => {
     try {
       setLoading(true)
       const response = await axios.get<Post[]>('/api/blog/all')
-      console.log(response.data)
+      // console.log(response.data)
       
       // Sort by likeCount in descending order and take top 3
       const sortedPosts = response.data

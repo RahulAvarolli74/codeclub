@@ -85,11 +85,6 @@ export default function CreateBlog() {
 
   const handlePublish = async () => {
 
-    console.log("Publishing blog:", {
-      title,
-      content: editor?.getHTML(),
-    })
-
     const response = await axios.post<any>("/api/blog/new",{
       title,
       content: editor?.getHTML(),
