@@ -29,19 +29,26 @@ const BlogPost = ({ blogId }: { blogId: string }) => {
   const [isLoading, setIsLoading] = useState(true);
 
   const handleLike = async() => {
-    setIsLiked((prev) => !prev);
-    setLikeCount((prev) => (isLiked ? prev - 1 : prev + 1));
-    // Optional: POST to backend to sync like state
+    // Optimistic update
+    const wasLiked = isLiked;
+    setIsLiked(!wasLiked);
+    setLikeCount(prev => wasLiked ? prev - 1 : prev + 1);
+    
     try {
-      const response = await axios.post<any>('/api/blog/like', { blogId })
-      setIsLiked(response.data.isLiked);
-      if(!response.data) {
-        setIsLiked((prev) => !prev);
-        setLikeCount((prev) => (isLiked ? prev + 1 : prev - 1));
+      const response = await axios.post<{ message: string; isLiked: boolean }>('/api/blog/like', { blogId });
+      
+      if (response.data && typeof response.data.isLiked === 'boolean') {
+        // Update with server response
+        setIsLiked(response.data.isLiked);
+        // Fetch fresh data to get accurate like count
+        fetchBlogPost();
       }
     } catch (error) {
-      setIsLiked((prev) => !prev);
-      setLikeCount((prev) => (isLiked ? prev + 1 : prev - 1));
+      console.error("Error liking blog:", error);
+      toast.error("Failed to update like status");
+      // Revert optimistic update
+      setIsLiked(wasLiked);
+      setLikeCount(prev => wasLiked ? prev + 1 : prev - 1);
     }
   };
 

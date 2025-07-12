@@ -8,13 +8,21 @@ export const runtime = 'nodejs';
 export async function POST(request: NextRequest) {
     const session = await auth();
     if(!session?.user) {
-        return new Response("Unauthorized", { status: 401 });
+        return NextResponse.json(
+            { error: "Unauthorized" },
+            { status: 401 }
+        );
     }
+    
     try {
         const {blogId} = await request.json();
         if (!blogId) {
-            return new Response("Blog ID is required", { status: 400 });
+            return NextResponse.json(
+                { error: "Blog ID is required" },
+                { status: 400 }
+            );
         }
+        
         // Check if the user has already liked this blog
         const existingLike = await db.like.findFirst({
             where: {
@@ -43,23 +51,19 @@ export async function POST(request: NextRequest) {
                 },
             });
             
-            return new Response(JSON.stringify({ message: "Like removed" }), {
-                status: 200,
-                headers: {
-                    "Content-Type": "application/json",
-                },
-            });
+            return NextResponse.json(
+                { message: "Like removed", isLiked: false },
+                { status: 200 }
+            );
         }
+        
         // User has not liked this blog, add a new like
         const newLike = await db.like.create({
             data:{
                 blogId,
                 userId: session.user.id,
             }
-        })
-        if(!newLike) {
-            return new Response("Failed to add like", { status: 500 });
-        }
+        });
 
         // Increment the like count on the blog post
         await db.blog.update({
@@ -72,14 +76,17 @@ export async function POST(request: NextRequest) {
                 },
             },
         });
-        return new Response(JSON.stringify({ message: "Like added" }), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json",
-            },
-        });
+        
+        return NextResponse.json(
+            { message: "Like added", isLiked: true },
+            { status: 200 }
+        );
+        
     } catch (error) {
         console.error("Error while adding like:", error);
-        return new Response("Internal Server Error", { status: 500 });
+        return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
     }
 }

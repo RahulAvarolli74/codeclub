@@ -1,11 +1,18 @@
 import { auth } from "@/auth";
 import { questions } from "@/data/questions";
 import axios from "axios";
+import { NextResponse } from "next/server";
+
+// Ensure this API route runs in Node.js runtime
+export const runtime = 'nodejs';
 
 export async function GET() {
     const session = await auth();
     if (!session?.user?.cfHandle) {
-        return new Response("Unauthorized", { status: 401 });
+        return NextResponse.json(
+            { error: "Unauthorized" },
+            { status: 401 }
+        );
     }
     
     try {
@@ -13,7 +20,10 @@ export async function GET() {
         const response = await axios.get<any>(`https://codeforces.com/api/user.status?handle=${cfHandle}`);
         
         if(response.data?.status !== "OK") {
-            return new Response("Error fetching data from Codeforces", { status: 500 });
+            return NextResponse.json(
+                { error: "Error fetching data from Codeforces" },
+                { status: 500 }
+            );
         }
 
         const solvedSet = new Set(
@@ -36,15 +46,13 @@ export async function GET() {
             };
         });
 
-        return new Response(JSON.stringify(personalized), {
-            status: 200,
-            headers: {
-                "Content-Type": "application/json"
-            }
-        });
+        return NextResponse.json(personalized, { status: 200 });
 
     } catch (error) {
-        console.log("Error fetching progress:", error);
-        return new Response("Internal Server Error", { status: 500 });
+        console.error("Error fetching progress:", error);
+        return NextResponse.json(
+            { error: "Internal Server Error" },
+            { status: 500 }
+        );
     }
 }

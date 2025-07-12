@@ -10,7 +10,10 @@ export async function GET() {
 
   const user = session?.user;
   if (!user) {
-    return new Response("Unauthorized", { status: 401 });
+    return NextResponse.json(
+      { error: "Unauthorized" },
+      { status: 401 }
+    );
   }
 
   try {
@@ -25,7 +28,10 @@ export async function GET() {
     });
 
     if (!dbUser) {
-      return new Response("User not found", { status: 404 });
+      return NextResponse.json(
+        { error: "User not found" },
+        { status: 404 }
+      );
     }
 
     // Fetch all blogs
@@ -62,14 +68,13 @@ export async function GET() {
       isLiked: likedIdsSet.has(blog.id),
     }));
 
-    return new Response(JSON.stringify(blogsWithIsLiked), {
-      status: 200,
-      headers: {
-        "Content-Type": "application/json",
-      },
-    });
+    return NextResponse.json(blogsWithIsLiked, { status: 200 });
+    
   } catch (error) {
     console.error("Error fetching blogs with isLiked:", error);
-    return new Response("Internal Server Error", { status: 500 });
+    return NextResponse.json(
+      { error: "Internal Server Error" },
+      { status: 500 }
+    );
   }
 }
