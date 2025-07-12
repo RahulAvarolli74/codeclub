@@ -1,53 +1,144 @@
+"use client"
 import { MessageSquare, ChevronUp, TrendingUp, SquarePen } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Card } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import axios from "axios"
+import { Skeleton } from "./ui/skeleton"
+
+interface Post {
+  id: string
+  title: string
+  content: string
+  authorId: string
+  author: {
+    id: string
+    name: string
+    image: string
+  }
+  likeCount: number
+  createdAt: string
+  updatedAt: string
+}
+
+// Helper function to strip HTML tags from content
+const stripHtml = (html: string) => {
+  const tmp = document.createElement("DIV")
+  tmp.innerHTML = html
+  return tmp.textContent || tmp.innerText || ""
+}
+
+// Helper function to format date
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString)
+  const now = new Date()
+  const diffInHours = Math.floor((now.getTime() - date.getTime()) / (1000 * 60 * 60))
+  
+  if (diffInHours < 1) {
+    return "just now"
+  } else if (diffInHours < 24) {
+    return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`
+  } else {
+    const diffInDays = Math.floor(diffInHours / 24)
+    return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`
+  }
+}
 
 export default function TopBlogs() {
-  const posts = [
-    {
-      id: 1,
-      user: "Anonymous User",
-      timestamp: "an hour ago",
-      title: "Atlassian P40 | Ghosted after all round",
-      content:
-        "Karate Round -> 5 system design question, word search problem Coding Round -> Employee Hirarchy Code Design Round -> Rating System, get aggregated rating System Design -> Similar to twitter feed Managerial Rounds -> Normal Managerial...",
-      votes: 10,
-      comments: 2,
-    },
-    {
-      id: 2,
-      user: "Anonymous User",
-      timestamp: "2 hours ago",
-      title: "Amazon Interview Tips",
-      content:
-        "My interview is scheduled from 11 July, the exact date is not provided. There will be 3 rounds two technical and one bar raiser. I have gone through their leadership principles, and I know basics of low level design like strategy, and decorator, and",
-      votes: 5,
-      comments: 6,
-    },
-    {
-      id: 3,
-      user: "Anonymous User",
-      timestamp: "an hour ago",
-      title: "Need some clarity",
-      content:
-        "FRIST TWO PARAGRAPHS ARE ME CRYING ABOUT THE THING THAT I FOUND UNREASONABLE BUT HAVE TO FOLLOW THEM BUT WHAT I ACTUALLY NEED IS ON THIRD PARAGRAPH.As the placement season has started companies will start recruiting...",
-      votes: 20,
-      comments: 0,
-    },
-    {
-      id: 4,
-      user: "Anonymous User",
-      timestamp: "an hour ago",
-      title: "Another Post",
-      content: "This is another post with some content.",
-      votes: 15,
-      comments: 3,
-    },
-  ]
-    .sort((a, b) => b.votes - a.votes)
-    .slice(0, 3)
+  const [posts, setPosts] = useState<Post[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    const fetchPosts = async () => {
+      try {
+        setLoading(true)
+        const response = await axios.get<Post[]>('/api/blog/all')
+        console.log(response.data)
+        
+        // Sort by likeCount in descending order and take top 3
+        const sortedPosts = response.data
+          .sort((a, b) => b.likeCount - a.likeCount)
+          .slice(0, 3)
+        
+        setPosts(sortedPosts)
+        setError(null)
+      } catch (err) {
+        console.error('Error fetching posts:', err)
+        setError('Failed to load posts')
+      } finally {
+        setLoading(false)
+      }
+    }
+    
+    fetchPosts()
+  }, [])
+
+  if (loading) {
+  return (
+    <div className="max-w-5xl mx-auto p-6">
+      <div className="mb-8 flex items-center justify-between">
+        <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
+          <TrendingUp className="w-5 h-5" />
+          <span className="text-lg font-medium">Most Popular Blogs</span>
+        </Button>
+        <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
+          <SquarePen className="w-4 h-4" />
+          Write
+        </Link>
+      </div>
+
+      <div className="space-y-4">
+        {[1, 2, 3].map((i) => (
+          <Card key={i} className="rounded-xl">
+            <CardContent className="p-6 flex gap-4">
+              <Skeleton className="w-10 h-10 rounded-full" />
+              <div className="flex-1 space-y-3">
+                <Skeleton className="h-4 w-1/4" />
+                <Skeleton className="h-6 w-3/4" />
+                <Skeleton className="h-4 w-full" />
+                <Skeleton className="h-4 w-2/3" />
+                <div className="flex gap-6 pt-2">
+                  <Skeleton className="h-4 w-12" />
+                  <Skeleton className="h-4 w-12" />
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+  if (error) {
+    return (
+      <div className="max-w-5xl mx-auto p-6">
+        <div className="mb-8 flex items-center justify-between">
+          <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
+            <TrendingUp className="w-5 h-5" />
+            <span className="text-lg font-medium">Most Popular Blogs</span>
+          </Button>
+          <Link href="/blogs/new" className="flex gap-2">
+            <SquarePen />
+            Write
+          </Link>
+        </div>
+        <div className="text-center py-8">
+          <p className="text-red-500">{error}</p>
+          <Button 
+            onClick={() => window.location.reload()} 
+            className="mt-4"
+            variant="outline"
+          >
+            Try Again
+          </Button>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="">
@@ -60,46 +151,59 @@ export default function TopBlogs() {
           </Button>
           <Link href="/blogs/new" className="flex gap-2">
             <SquarePen />
-              Write
+            Write
           </Link>
         </div>
 
         {/* Posts */}
         <div className="space-y-4">
-          {posts.map((post) => (
-            <Card key={post.id} className="rounded-xl p-6">
-              <div className="flex gap-4">
-                <Avatar className="w-10 h-10 flex-shrink-0">
-                  <AvatarImage src="/placeholder.svg?height=40&width=40" />
-                  <AvatarFallback>AU</AvatarFallback>
-                </Avatar>
+          {posts.length > 0 ? (
+            posts.map((post) => (
+              <Card key={post.id} className="rounded-xl p-6">
+                <div className="flex gap-4">
+                  <Avatar className="w-10 h-10 flex-shrink-0">
+                    <AvatarImage src={post.author.image} alt={post.author.name} />
+                    <AvatarFallback>
+                      {post.author.name.split(' ').map(n => n[0]).join('').toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
 
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-3">
-                    <span className="text-neutral-400 text-sm font-medium">{post.user}</span>
-                    <span className="text-neutral-600">•</span>
-                    <span className="text-neutral-500 text-sm">{post.timestamp}</span>
-                  </div>
-
-                  <h3 className="font-semibold text-lg mb-3 leading-tight">{post.title}</h3>
-
-                  <p className="text-neutral-400 text-sm leading-relaxed mb-4 line-clamp-2">{post.content}</p>
-
-                  <div className="flex items-center gap-6">
-                    <div className="flex items-center gap-2 text-neutral-500 cursor-pointer">
-                      <ChevronUp className="w-4 h-4" />
-                      <span className="text-sm font-medium">{post.votes}</span>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span className="text-neutral-400 text-sm font-medium">{post.author.name}</span>
+                      <span className="text-neutral-600">•</span>
+                      <span className="text-neutral-500 text-sm">{formatDate(post.createdAt)}</span>
                     </div>
 
-                    <div className="flex items-center gap-2 text-neutral-500 cursor-pointer">
-                      <MessageSquare className="w-4 h-4" />
-                      <span className="text-sm font-medium">{post.comments}</span>
+                    <Link href={`/blogs/${post.id}`} className="font-semibold text-lg mb-3 leading-tight">{post.title}</Link>
+
+                    <p className="text-neutral-400 text-sm leading-relaxed mb-4 line-clamp-2">
+                      {stripHtml(post.content)}
+                    </p>
+
+                    <div className="flex items-center gap-6">
+                      <div className="flex items-center gap-2 text-neutral-500 cursor-pointer">
+                        <ChevronUp className="w-4 h-4" />
+                        <span className="text-sm font-medium">{post.likeCount}</span>
+                      </div>
+
+                      <div className="flex items-center gap-2 text-neutral-500 cursor-pointer">
+                        <MessageSquare className="w-4 h-4" />
+                        <span className="text-sm font-medium">0</span>
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </Card>
-          ))}
+              </Card>
+            ))
+          ) : (
+            <div className="text-center py-8">
+              <p className="text-neutral-500">No posts available yet.</p>
+              <Link href="/blogs/new" className="text-orange-400 hover:text-orange-300 mt-2 inline-block">
+                Write the first post!
+              </Link>
+            </div>
+          )}
         </div>
       </div>
     </div>

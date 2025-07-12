@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, use } from "react"
 import { useEditor, EditorContent } from "@tiptap/react"
 import StarterKit from "@tiptap/starter-kit"
 import Placeholder from "@tiptap/extension-placeholder"
@@ -29,8 +29,12 @@ import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { useSession } from "next-auth/react"
+import axios from "axios"
+import { useRouter } from "next/navigation"
+import { toast } from "sonner"
 
 export default function CreateBlog() {
+  const router = useRouter();
   const { data : session } = useSession();
   const [title, setTitle] = useState("")
   const [wordCount, setWordCount] = useState(0)
@@ -79,11 +83,24 @@ export default function CreateBlog() {
     return () => clearTimeout(timer)
   }, [title, editor?.getHTML()])
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
+
     console.log("Publishing blog:", {
       title,
       content: editor?.getHTML(),
     })
+
+    const response = await axios.post<any>("/api/blog/new",{
+      title,
+      content: editor?.getHTML(),
+    })
+
+    if(response.status === 201){
+      toast.success("Blog published successfully!")
+      router.push(`/blogs/${response.data.id}`)
+    }else{
+      toast.error("Failed to publish blog. Please try again.",response.data.message)
+    }
   }
 
   

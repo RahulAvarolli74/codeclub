@@ -1,9 +1,14 @@
-import React from 'react'
+"use client";
+import BlogPost from "@/components/blog-page";
+import { useParams } from "next/navigation";
 
-const page = () => {
+
+export default function Page() {
+  const slug = useParams().blogId as string;
+
   return (
-    <div>page</div>
+    <div>
+      <BlogPost blogId={slug}  />
+    </div>
   )
 }
-
-export default page
