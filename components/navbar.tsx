@@ -87,7 +87,7 @@ export default function Component() {
           </div>
           {/* Main nav */}
           <div className="flex items-center gap-6">
-            <a href="#" className="text-primary hover:text-primary/90">
+            <a href="/explore" className="text-primary hover:text-primary/90">
               {"<codeclub />"}
             </a>
             {/* Navigation menu */}

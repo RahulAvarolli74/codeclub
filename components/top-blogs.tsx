@@ -149,7 +149,7 @@ export default function TopBlogs({ showAll = false, maxPosts = 3 }: { showAll?: 
       <div className="max-w-5xl mx-auto p-6">
         {/* Header */}
         <div className="mb-8 flex items-center justify-between">
-          <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
+          <Button variant="ghost" className="flex items-center gap-2 text-orange-400 p-0">
             <TrendingUp className="w-5 h-5" />
             <span className="text-lg font-medium">
               {showAll ? "All Blogs" : "Most Popular Blogs"}

@@ -11,7 +11,14 @@ const menuItems = [
     { name: 'Stats', href: '#stats' },
     { name: 'Features', href: '#features' },
     { name: 'Team', href: '#team' },
-]
+];
+
+const handleSmoothScroll = (href: string) => {
+    const element = document.querySelector(href);
+    if (element) {
+        element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+};
 
 export const HeroHeader = () => {
     const [menuState, setMenuState] = React.useState(false)
@@ -55,11 +62,11 @@ export const HeroHeader = () => {
                             <ul className="flex gap-8 text-sm">
                                 {menuItems.map((item, index) => (
                                     <li key={index}>
-                                        <Link
-                                            href={item.href}
-                                            className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                        <button
+                                            onClick={() => handleSmoothScroll(item.href)}
+                                            className="text-muted-foreground hover:text-accent-foreground block duration-150 bg-transparent border-none cursor-pointer">
                                             <span>{item.name}</span>
-                                        </Link>
+                                        </button>
                                     </li>
                                 ))}
                             </ul>
@@ -70,11 +77,14 @@ export const HeroHeader = () => {
                                 <ul className="space-y-6 text-base">
                                     {menuItems.map((item, index) => (
                                         <li key={index}>
-                                            <Link
-                                                href={item.href}
-                                                className="text-muted-foreground hover:text-accent-foreground block duration-150">
+                                            <button
+                                                onClick={() => {
+                                                    handleSmoothScroll(item.href);
+                                                    setMenuState(false); // Close mobile menu after clicking
+                                                }}
+                                                className="text-muted-foreground hover:text-accent-foreground block duration-150 bg-transparent border-none cursor-pointer w-full text-left">
                                                 <span>{item.name}</span>
-                                            </Link>
+                                            </button>
                                         </li>
                                     ))}
                                 </ul>
