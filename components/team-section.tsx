@@ -1,23 +1,23 @@
 const members = [
     {
-        name: 'Mahesh Dalle',
+        name: 'Bhupindar',
         role: 'Creator',
-        avatar: 'https://avatars.githubusercontent.com/u/47919550?v=4',
+        avatar: '/crystalMan.jpg',
     },
     {
         name: 'Batman',
         role: 'Frontend Dev',
-        avatar: 'https://avatars.githubusercontent.com/u/68236786?v=4',
+        avatar: '/crystalMan.jpg',
     },
     {
         name: 'Spiderman',
         role: 'Frontend Dev',
-        avatar: 'https://avatars.githubusercontent.com/u/99137927?v=4',
+        avatar: '/crystalMan.jpg',
     },
     {
-        name: 'Binod Op',
+        name: 'Binod',
         role: 'Backend Dev',
-        avatar: 'https://avatars.githubusercontent.com/u/31113941?v=4',
+        avatar: '/crystalMan.jpg',
     },
 ]
 
@@ -28,7 +28,7 @@ export default function TeamSection() {
                 <h2 className="mb-8 text-4xl font-bold md:mb-16 lg:text-5xl">Our team</h2>
 
                 <div>
-                    <h3 className="mb-6 text-lg font-medium">Leadership</h3>
+                    <h3 className="mb-6 text-lg font-medium">Leads</h3>
                     <div className="grid grid-cols-2 gap-4 border-t py-6 md:grid-cols-4">
                         {members.map((member, index) => (
                             <div key={index}>
@@ -43,7 +43,7 @@ export default function TeamSection() {
                 </div>
 
                 <div className="mt-6">
-                    <h3 className="mb-6 text-lg font-medium">Engineering</h3>
+                    <h3 className="mb-6 text-lg font-medium">QFAT</h3>
                     <div data-rounded="full" className="grid grid-cols-2 gap-4 border-t py-6 md:grid-cols-4">
                         {members.map((member, index) => (
                             <div key={index}>
@@ -58,7 +58,7 @@ export default function TeamSection() {
                 </div>
 
                 <div className="mt-6">
-                    <h3 className="mb-6 text-lg font-medium">Marketing</h3>
+                    <h3 className="mb-6 text-lg font-medium">Media</h3>
                     <div data-rounded="full" className="grid grid-cols-2 gap-4 border-t py-6 md:grid-cols-4">
                         {members.map((member, index) => (
                             <div key={index}>

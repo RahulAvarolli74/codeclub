@@ -23,11 +23,13 @@ import {
   Heading2,
   Heading3,
   ChevronLeft,
+  Loader2,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Separator } from "@/components/ui/separator"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Skeleton } from "@/components/ui/skeleton"
 import { useSession } from "next-auth/react"
 import axios from "axios"
 import { useRouter } from "next/navigation"
@@ -40,6 +42,7 @@ export default function CreateBlog() {
   const [wordCount, setWordCount] = useState(0)
   const [isPreview, setIsPreview] = useState(false)
   const [lastSaved, setLastSaved] = useState<Date | null>(null)
+  const [isPublishing, setIsPublishing] = useState(false)
 
   const editor = useEditor({
     extensions: [
@@ -84,24 +87,88 @@ export default function CreateBlog() {
   }, [title, editor?.getHTML()])
 
   const handlePublish = async () => {
+    if (!title.trim()) {
+      toast.error("Please add a title to your blog post")
+      return
+    }
 
-    const response = await axios.post<any>("/api/blog/new",{
-      title,
-      content: editor?.getHTML(),
-    })
+    if (!editor?.getText().trim()) {
+      toast.error("Please add content to your blog post")
+      return
+    }
 
-    if(response.status === 201){
-      toast.success("Blog published successfully!")
-      router.push(`/blogs/${response.data.id}`)
-    }else{
-      toast.error("Failed to publish blog. Please try again.",response.data.message)
+    setIsPublishing(true)
+
+    try {
+      const response = await axios.post<any>("/api/blog/new", {
+        title,
+        content: editor?.getHTML(),
+      })
+
+      if (response.status === 201) {
+        toast.success("Blog published successfully!")
+        router.push(`/blogs/${response.data.id}`)
+      } else {
+        toast.error("Failed to publish blog. Please try again.")
+      }
+    } catch (error) {
+      console.error("Error publishing blog:", error)
+      toast.error("Failed to publish blog. Please try again.")
+    } finally {
+      setIsPublishing(false)
     }
   }
 
-  
-
   if (!editor) {
-    return <div>Loading editor...</div>
+    return (
+      <div className="min-h-screen">
+        <div className="max-w-4xl mx-auto p-6">
+          {/* Header Skeleton */}
+          <div className="flex items-center justify-between mb-8">
+            <div className="flex items-center gap-4">
+              <Skeleton className="h-7 w-16" />
+              <Skeleton className="h-4 w-24" />
+            </div>
+            <div className="flex items-center gap-2">
+              <Skeleton className="h-9 w-20" />
+              <Skeleton className="h-9 w-20" />
+            </div>
+          </div>
+
+          {/* Title Input Skeleton */}
+          <div className="mb-6">
+            <Skeleton className="h-16 w-full" />
+          </div>
+
+          {/* Toolbar Skeleton */}
+          <div className="flex items-center gap-1 mb-4 p-2 border rounded-lg flex-wrap">
+            {Array.from({ length: 12 }).map((_, i) => (
+              <Skeleton key={i} className="h-8 w-8" />
+            ))}
+          </div>
+
+          {/* Editor Skeleton */}
+          <div className="mb-6 border rounded-lg p-4 min-h-[400px] space-y-3">
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-4/5" />
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-2/3" />
+            <div className="pt-8">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-5/6 mt-2" />
+              <Skeleton className="h-4 w-3/4 mt-2" />
+            </div>
+          </div>
+
+          {/* Footer Skeleton */}
+          <div className="flex items-center justify-between pt-4 border-t">
+            <Skeleton className="h-4 w-16" />
+            <Skeleton className="h-4 w-32" />
+          </div>
+        </div>
+      </div>
+    )
   }
 
   if (isPreview) {
@@ -115,9 +182,18 @@ export default function CreateBlog() {
               Back to Editor
             </Button>
             <div className="flex gap-2">
-              <Button onClick={handlePublish}>
-                <Send className="w-4 h-4 mr-2" />
-                Publish
+              <Button onClick={handlePublish} disabled={isPublishing}>
+                {isPublishing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                    Publishing...
+                  </>
+                ) : (
+                  <>
+                    <Send className="w-4 h-4 mr-2" />
+                    Publish
+                  </>
+                )}
               </Button>
             </div>
           </div>
@@ -159,9 +235,18 @@ export default function CreateBlog() {
               <Eye className="w-4 h-4 mr-2" />
               Preview
             </Button>
-            <Button onClick={handlePublish}>
-              <Send className="w-4 h-4 mr-2" />
-              Publish
+            <Button onClick={handlePublish} disabled={isPublishing}>
+              {isPublishing ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Publishing...
+                </>
+              ) : (
+                <>
+                  <Send className="w-4 h-4 mr-2" />
+                  Publish
+                </>
+              )}
             </Button>
           </div>
         </div>

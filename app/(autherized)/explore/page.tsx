@@ -4,7 +4,7 @@ import TopBlogs from "@/components/top-blogs"
 
 const page = () => {
   return (
-    <div className="container">
+    <div className="">
       <ExploreCards />
       <Separator />
       <TopBlogs showAll={false} maxPosts={3} />
