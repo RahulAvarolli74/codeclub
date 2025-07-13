@@ -9,11 +9,13 @@ import { BadgePlus, Copy, User } from "lucide-react"
 import { useState } from "react"
 import { toast } from "sonner"
 import axios from "axios"
+import { useRouter } from "next/navigation"
 
 export function CodeforcesConnect() {
   const [handle, setHandle] = useState("")
   const [isOpen, setIsOpen] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -25,6 +27,7 @@ export function CodeforcesConnect() {
         setIsOpen(false)
         toast.success(`Codeforces handle "${handle}" verified successfully!`)
         setHandle("") 
+        router.refresh()
       } else {
         toast.error("Failed to connect handle. Please try again.")
       }

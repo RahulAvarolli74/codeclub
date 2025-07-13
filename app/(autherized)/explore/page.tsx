@@ -6,8 +6,8 @@ const page = () => {
   return (
     <div className="container">
       <ExploreCards />
-      <Separator  />
-      <TopBlogs />
+      <Separator />
+      <TopBlogs showAll={false} maxPosts={3} />
     </div>
   )
 }

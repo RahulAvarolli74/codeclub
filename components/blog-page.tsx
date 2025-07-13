@@ -35,13 +35,15 @@ const BlogPost = ({ blogId }: { blogId: string }) => {
     setLikeCount(prev => wasLiked ? prev - 1 : prev + 1);
     
     try {
-      const response = await axios.post<{ message: string; isLiked: boolean }>('/api/blog/like', { blogId });
+      const response = await axios.post<{ message: string; isLiked: boolean; likeCount?: number }>('/api/blog/like', { blogId });
       
       if (response.data && typeof response.data.isLiked === 'boolean') {
-        // Update with server response
+        // Update with server response without refetching
         setIsLiked(response.data.isLiked);
-        // Fetch fresh data to get accurate like count
-        fetchBlogPost();
+        // Update like count if provided by server
+        if (typeof response.data.likeCount === 'number') {
+          setLikeCount(response.data.likeCount);
+        }
       }
     } catch (error) {
       console.error("Error liking blog:", error);
@@ -83,7 +85,7 @@ const BlogPost = ({ blogId }: { blogId: string }) => {
 
   return (
     <div className="min-h-screen">
-      <main className="max-w-4xl mx-auto px-4 py-8">
+      <main className="max-w-6xl md:max-w-4xl mx-auto px-4 py-8">
         <article className="max-w-3xl mx-auto">
           {/* Title */}
           {isLoading ? (
@@ -143,7 +145,20 @@ const BlogPost = ({ blogId }: { blogId: string }) => {
             </div>
           ) : (
             <div
-              className="prose prose-lg max-w-none"
+              className="prose prose-lg max-w-none 
+                [&_mark]:bg-yellow-200 [&_mark]:px-1 [&_mark]:rounded 
+                [&_strong]:font-bold [&_strong]:text-foreground
+                [&_blockquote]:border-l-4 [&_blockquote]:border-muted-foreground [&_blockquote]:pl-4 [&_blockquote]:italic [&_blockquote]:text-muted-foreground
+                [&_ol]:list-decimal [&_ol]:ml-6 [&_ol]:space-y-2
+                [&_ul]:list-disc [&_ul]:ml-6 [&_ul]:space-y-2
+                [&_li]:mb-2
+                [&_p]:mb-4 [&_p]:leading-relaxed
+                [&_h1]:text-3xl [&_h1]:font-bold [&_h1]:mb-4
+                [&_h2]:text-2xl [&_h2]:font-semibold [&_h2]:mb-3
+                [&_h3]:text-xl [&_h3]:font-medium [&_h3]:mb-2
+                [&_code]:bg-muted [&_code]:px-2 [&_code]:py-1 [&_code]:rounded [&_code]:text-sm [&_code]:font-mono
+                [&_pre]:bg-muted [&_pre]:p-4 [&_pre]:rounded [&_pre]:overflow-x-auto
+                [&_a]:text-primary [&_a]:underline [&_a]:hover:text-primary/80"
               dangerouslySetInnerHTML={{ __html: blogData?.content || "" }}
               style={{
                 lineHeight: "1.75",

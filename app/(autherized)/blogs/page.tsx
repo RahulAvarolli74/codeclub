@@ -3,7 +3,7 @@ import TopBlogs from "@/components/top-blogs"
 const page = () => {
   return (
     <div>
-        <TopBlogs />
+      <TopBlogs showAll={true} />
     </div>
   )
 }

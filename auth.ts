@@ -16,25 +16,27 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   async jwt({ token, user }) {
    if (user) {
     // When user first signs in, get their data from the database
-    try {
-      const dbUser = await db.user.findUnique({
-        where: { email: user.email! },
-        select: { id: true, cfHandle: true, email: true, name: true }
-      });
+    // try {
+    //   const dbUser = await db.user.findUnique({
+    //     where: { email: user.email! },
+    //     select: { id: true, cfHandle: true, email: true, name: true }
+    //   });
       
-      if (dbUser) {
-        token.id = dbUser.id;
-        token.cfHandle = dbUser.cfHandle;
-      } else {
-        // User doesn't exist in our database yet
-        token.id = user.id;
-        token.cfHandle = null;
-      }
-    } catch (error) {
-      console.error("Error fetching user from database:", error);
-      token.id = user.id;
-      token.cfHandle = null;
-    }
+    //   if (dbUser) {
+    //     token.id = dbUser.id;
+    //     token.cfHandle = dbUser.cfHandle;
+    //   } else {
+    //     // User doesn't exist in our database yet
+    //     token.id = user.id;
+    //     token.cfHandle = null;
+    //   }
+    // } catch (error) {
+    //   console.error("Error fetching user from database:", error);
+    //   token.id = user.id;
+    //   token.cfHandle = null;
+    // }
+    token.id = user.id;
+    token.cfHandle = user.cfHandle || null;
    }
 
    return token;
@@ -46,6 +48,22 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     session.user.id = String(token.id);
     session.user.cfHandle = (token.cfHandle as string) || null;
    }
+
+   if (token.sub) {
+      try {
+        const dbUser = await db.user.findUnique({
+          where: { id: token.sub },
+          select: { id: true, cfHandle: true, email: true, name: true }
+        });
+        
+        if (dbUser) {
+          token.id = dbUser.id;
+          token.cfHandle = dbUser.cfHandle;
+        }
+      } catch (error) {
+        console.error("Error fetching user from database:", error);
+      }
+    }
 
    return session;
   },

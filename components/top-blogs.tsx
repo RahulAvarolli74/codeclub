@@ -1,5 +1,5 @@
 "use client"
-import { MessageSquare, ChevronUp, TrendingUp, SquarePen, Heart } from "lucide-react"
+import { TrendingUp, SquarePen, Heart } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
@@ -47,47 +47,23 @@ const formatDate = (dateString: string) => {
   }
 }
 
-export default function TopBlogs() {
+export default function TopBlogs({ showAll = false, maxPosts = 3 }: { showAll?: boolean; maxPosts?: number }) {
   const [posts, setPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
-  const handleLike = async (blogId: string, currentIsLiked: boolean) => {
-    
-    try {
-      const response = await axios.post('/api/blog/like', { blogId })
-      
-      if (response.status === 200) {
-        // Update the posts state to reflect the like/unlike
-        setPosts(prevPosts => 
-          prevPosts.map(post => 
-            post.id === blogId 
-              ? { 
-                  ...post, 
-                  isLiked: !currentIsLiked,
-                  likeCount: currentIsLiked ? post.likeCount - 1 : post.likeCount + 1
-                }
-              : post
-          )
-        )
-      }
-    } catch (err) {
-      console.error('Error toggling like:', err)
-    }
-  }
-
-const fetchPosts =useCallback( async () => {
+  const fetchPosts = useCallback(async () => {
     try {
       setLoading(true)
       const response = await axios.get<Post[]>('/api/blog/all')
-      // console.log(response.data)
       
-      // Sort by likeCount in descending order and take top 3
-      const sortedPosts = response.data
-        .sort((a, b) => b.likeCount - a.likeCount)
-        .slice(0, 3)
+      // Sort by likeCount in descending order
+      const sortedPosts = response.data.sort((a, b) => b.likeCount - a.likeCount)
       
-      setPosts(sortedPosts)
+      // Show all posts or limit based on maxPosts
+      const postsToShow = showAll ? sortedPosts : sortedPosts.slice(0, maxPosts)
+      
+      setPosts(postsToShow)
       setError(null)
     } catch (err) {
       console.error('Error fetching posts:', err)
@@ -95,48 +71,49 @@ const fetchPosts =useCallback( async () => {
     } finally {
       setLoading(false)
     }
-  },[])
+  }, [showAll, maxPosts])
 
   useEffect(() => {
     fetchPosts()
   }, [fetchPosts])
 
   if (loading) {
-  return (
-    <div className="max-w-5xl mx-auto p-6">
-      <div className="mb-8 flex items-center justify-between">
-        <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
-          <TrendingUp className="w-5 h-5" />
-          <span className="text-lg font-medium">Most Popular Blogs</span>
-        </Button>
-        <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
-          <SquarePen className="w-4 h-4" />
-          Write
-        </Link>
-      </div>
+    return (
+      <div className="max-w-5xl mx-auto p-6">
+        <div className="mb-8 flex items-center justify-between">
+          <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
+            <TrendingUp className="w-5 h-5" />
+            <span className="text-lg font-medium">
+              {showAll ? "All Blogs" : "Most Popular Blogs"}
+            </span>
+          </Button>
+          <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
+            <SquarePen className="w-4 h-4" />
+            Write
+          </Link>
+        </div>
 
-      <div className="space-y-4">
-        {[1, 2, 3].map((i) => (
-          <Card key={i} className="rounded-xl">
-            <CardContent className="p-6 flex gap-4">
-              <Skeleton className="w-10 h-10 rounded-full" />
-              <div className="flex-1 space-y-3">
-                <Skeleton className="h-4 w-1/4" />
-                <Skeleton className="h-6 w-3/4" />
-                <Skeleton className="h-4 w-full" />
-                <Skeleton className="h-4 w-2/3" />
-                <div className="flex gap-6 pt-2">
-                  <Skeleton className="h-4 w-12" />
-                  <Skeleton className="h-4 w-12" />
+        <div className="space-y-4">
+          {[1, 2, 3].map((i) => (
+            <Card key={i} className="rounded-xl">
+              <CardContent className="p-6 flex gap-4">
+                <Skeleton className="w-10 h-10 rounded-full" />
+                <div className="flex-1 space-y-3">
+                  <Skeleton className="h-4 w-1/4" />
+                  <Skeleton className="h-6 w-3/4" />
+                  <Skeleton className="h-4 w-full" />
+                  <Skeleton className="h-4 w-2/3" />
+                  <div className="flex gap-6 pt-2">
+                    <Skeleton className="h-4 w-12" />
+                  </div>
                 </div>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
+              </CardContent>
+            </Card>
+          ))}
+        </div>
       </div>
-    </div>
-  );
-}
+    );
+  }
 
   if (error) {
     return (
@@ -144,10 +121,12 @@ const fetchPosts =useCallback( async () => {
         <div className="mb-8 flex items-center justify-between">
           <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
             <TrendingUp className="w-5 h-5" />
-            <span className="text-lg font-medium">Most Popular Blogs</span>
+            <span className="text-lg font-medium">
+              {showAll ? "All Blogs" : "Most Popular Blogs"}
+            </span>
           </Button>
-          <Link href="/blogs/new" className="flex gap-2">
-            <SquarePen />
+          <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
+            <SquarePen className="w-4 h-4" />
             Write
           </Link>
         </div>
@@ -172,10 +151,12 @@ const fetchPosts =useCallback( async () => {
         <div className="mb-8 flex items-center justify-between">
           <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
             <TrendingUp className="w-5 h-5" />
-            <span className="text-lg font-medium">Most Popular Blogs</span>
+            <span className="text-lg font-medium">
+              {showAll ? "All Blogs" : "Most Popular Blogs"}
+            </span>
           </Button>
-          <Link href="/blogs/new" className="flex gap-2">
-            <SquarePen />
+          <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
+            <SquarePen className="w-4 h-4" />
             Write
           </Link>
         </div>
@@ -184,7 +165,7 @@ const fetchPosts =useCallback( async () => {
         <div className="space-y-4">
           {posts.length > 0 ? (
             posts.map((post) => (
-              <Card key={post.id} className="rounded-xl p-6">
+              <Card key={post.id} className="rounded-xl p-6 hover:shadow-md transition-shadow">
                 <div className="flex gap-4">
                   <Avatar className="w-10 h-10 flex-shrink-0">
                     <AvatarImage src={post.author.image} alt={post.author.name} />
@@ -200,16 +181,21 @@ const fetchPosts =useCallback( async () => {
                       <span className="text-neutral-500 text-sm">{formatDate(post.createdAt)}</span>
                     </div>
 
-                    <Link href={`/blogs/${post.id}`} className="font-semibold text-lg mb-3 leading-tight">{post.title}</Link>
+                    <Link 
+                      href={`/blogs/${post.id}`} 
+                      className="block font-semibold text-lg mb-3 leading-tight hover:text-orange-400 transition-colors"
+                    >
+                      {post.title}
+                    </Link>
 
                     <p className="text-neutral-400 text-sm leading-relaxed mb-4 line-clamp-2">
                       {stripHtml(post.content)}
                     </p>
 
                     <div className="flex items-center gap-6">
-                      <button
-                        onClick={()=>handleLike(post.id, post.isLiked)}
-                        className="flex items-center space-x-2 group"
+                      <Link
+                        href={`/blogs/${post.id}`}
+                        className="flex items-center space-x-2 group hover:text-red-500 transition-colors"
                       >
                         <Heart
                           className={`w-4 h-4 transition-colors ${
@@ -221,7 +207,7 @@ const fetchPosts =useCallback( async () => {
                         <span className="text-muted-foreground group-hover:text-red-500">
                           {post.likeCount}
                         </span>
-                      </button>
+                      </Link>
                     </div>
                   </div>
                 </div>
@@ -236,6 +222,17 @@ const fetchPosts =useCallback( async () => {
             </div>
           )}
         </div>
+
+        {/* See More Button for Explore Page */}
+        {!showAll && posts.length > 0 && (
+          <div className="text-center mt-8">
+            <Link href="/blogs">
+              <Button variant="outline" className="hover:bg-orange-50 hover:border-orange-300">
+                See More Blogs
+              </Button>
+            </Link>
+          </div>
+        )}
       </div>
     </div>
   )

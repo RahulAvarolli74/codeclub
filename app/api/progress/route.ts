@@ -33,8 +33,6 @@ export async function GET() {
         );
 
         const personalized = questions.map(q => {
-            // Extract contestId and index from the href
-            // Example: https://codeforces.com/problemset/problem/1972/B
             const urlParts = q.href.split('/');
             const contestId = urlParts[urlParts.length - 2];
             const index = urlParts[urlParts.length - 1];
