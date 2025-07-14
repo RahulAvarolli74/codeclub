@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import Link from "next/link"
-import { useCallback, useEffect, useState } from "react"
+import { useCallback, useEffect, useState, useMemo } from "react"
 import axios from "axios"
 import { Skeleton } from "./ui/skeleton"
 
@@ -48,22 +48,16 @@ const formatDate = (dateString: string) => {
 }
 
 export default function TopBlogs({ showAll = false, maxPosts = 3 }: { showAll?: boolean; maxPosts?: number }) {
-  const [posts, setPosts] = useState<Post[]>([])
+  const [allPosts, setAllPosts] = useState<Post[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [sortBy, setSortBy] = useState<'liked' | 'recent'>('liked')
 
   const fetchPosts = useCallback(async () => {
     try {
       setLoading(true)
       const response = await axios.get<Post[]>('/api/blog/all')
-      
-      // Sort by likeCount in descending order
-      const sortedPosts = response.data.sort((a, b) => b.likeCount - a.likeCount)
-      
-      // Show all posts or limit based on maxPosts
-      const postsToShow = showAll ? sortedPosts : sortedPosts.slice(0, maxPosts)
-      
-      setPosts(postsToShow)
+      setAllPosts(response.data)
       setError(null)
     } catch (err) {
       console.error('Error fetching posts:', err)
@@ -71,7 +65,20 @@ export default function TopBlogs({ showAll = false, maxPosts = 3 }: { showAll?: 
     } finally {
       setLoading(false)
     }
-  }, [showAll, maxPosts])
+  }, [])
+
+  // Sort and filter posts based on current settings
+  const posts = useMemo(() => {
+    let sortedPosts: Post[]
+    if (sortBy === 'liked') {
+      sortedPosts = [...allPosts].sort((a, b) => b.likeCount - a.likeCount)
+    } else {
+      sortedPosts = [...allPosts].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+    }
+    
+    // Show all posts or limit based on maxPosts
+    return showAll ? sortedPosts : sortedPosts.slice(0, maxPosts)
+  }, [allPosts, sortBy, showAll, maxPosts])
 
   useEffect(() => {
     fetchPosts()
@@ -80,13 +87,35 @@ export default function TopBlogs({ showAll = false, maxPosts = 3 }: { showAll?: 
   if (loading) {
     return (
       <div className="max-w-5xl md:max-w-5xl mx-auto p-6">
-        <div className="mb-8 flex items-center justify-between">
-          <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
-            <TrendingUp className="w-5 h-5" />
-            <span className="text-lg font-medium">
-              {showAll ? "All Blogs" : "Most Popular Blogs"}
-            </span>
-          </Button>
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {showAll ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-lg font-medium text-neutral-700 dark:text-neutral-300">Sort by:</span>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled
+                  className="hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                >
+                  Most Liked
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled
+                  className="hover:bg-neutral-100 dark:hover:bg-neutral-800"
+                >
+                  Most Recent
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
+              <TrendingUp className="w-5 h-5" />
+              <span className="text-lg font-medium">Most Popular Blogs</span>
+            </Button>
+          )}
           <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
             <SquarePen className="w-4 h-4" />
             Write
@@ -118,13 +147,43 @@ export default function TopBlogs({ showAll = false, maxPosts = 3 }: { showAll?: 
   if (error) {
     return (
       <div className="max-w-5xl mx-auto p-6">
-        <div className="mb-8 flex items-center justify-between">
-          <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
-            <TrendingUp className="w-5 h-5" />
-            <span className="text-lg font-medium">
-              {showAll ? "All Blogs" : "Most Popular Blogs"}
-            </span>
-          </Button>
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {showAll ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-lg font-medium text-neutral-700 dark:text-neutral-300">Sort by:</span>
+              <div className="flex gap-2">
+                <Button
+                  variant={sortBy === 'liked' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSortBy('liked')}
+                  className={`${
+                    sortBy === 'liked' 
+                      ? 'bg-neutral-800 hover:bg-neutral-700 text-white dark:bg-neutral-200 dark:hover:bg-neutral-300 dark:text-black' 
+                      : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                  }`}
+                >
+                  Most Liked
+                </Button>
+                <Button
+                  variant={sortBy === 'recent' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSortBy('recent')}
+                  className={`${
+                    sortBy === 'recent' 
+                      ? 'bg-neutral-800 hover:bg-neutral-700 text-white dark:bg-neutral-200 dark:hover:bg-neutral-300 dark:text-black' 
+                      : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                  }`}
+                >
+                  Most Recent
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
+              <TrendingUp className="w-5 h-5" />
+              <span className="text-lg font-medium">Most Popular Blogs</span>
+            </Button>
+          )}
           <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
             <SquarePen className="w-4 h-4" />
             Write
@@ -148,13 +207,43 @@ export default function TopBlogs({ showAll = false, maxPosts = 3 }: { showAll?: 
     <div className="">
       <div className="max-w-5xl mx-auto p-6">
         {/* Header */}
-        <div className="mb-8 flex items-center justify-between">
-          <Button variant="ghost" className="flex items-center gap-2 text-orange-400 p-0">
-            <TrendingUp className="w-5 h-5" />
-            <span className="text-lg font-medium">
-              {showAll ? "All Blogs" : "Most Popular Blogs"}
-            </span>
-          </Button>
+        <div className="mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+          {showAll ? (
+            <div className="flex flex-wrap items-center gap-3">
+              <span className="text-lg font-medium text-neutral-700 dark:text-neutral-300">Sort by:</span>
+              <div className="flex gap-2">
+                <Button
+                  variant={sortBy === 'liked' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSortBy('liked')}
+                  className={`${
+                    sortBy === 'liked' 
+                      ? 'bg-neutral-800 hover:bg-neutral-700 text-white dark:bg-neutral-200 dark:hover:bg-neutral-300 dark:text-black' 
+                      : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                  }`}
+                >
+                  Most Liked
+                </Button>
+                <Button
+                  variant={sortBy === 'recent' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setSortBy('recent')}
+                  className={`${
+                    sortBy === 'recent' 
+                      ? 'bg-neutral-800 hover:bg-neutral-700 text-white dark:bg-neutral-200 dark:hover:bg-neutral-300 dark:text-black' 
+                      : 'hover:bg-neutral-100 dark:hover:bg-neutral-800'
+                  }`}
+                >
+                  Most Recent
+                </Button>
+              </div>
+            </div>
+          ) : (
+            <Button variant="ghost" className="flex items-center gap-2 text-orange-400 hover:text-orange-300 p-0">
+              <TrendingUp className="w-5 h-5" />
+              <span className="text-lg font-medium">Most Popular Blogs</span>
+            </Button>
+          )}
           <Link href="/blogs/new" className="flex gap-2 items-center text-sm text-muted-foreground hover:underline">
             <SquarePen className="w-4 h-4" />
             Write

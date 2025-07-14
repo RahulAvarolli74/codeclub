@@ -7,7 +7,7 @@ const page = () => {
     <div className="">
       <ExploreCards />
       <Separator />
-      <TopBlogs showAll={false} maxPosts={3} />
+      <TopBlogs maxPosts={3} />
     </div>
   )
 }

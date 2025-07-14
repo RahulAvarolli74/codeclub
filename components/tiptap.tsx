@@ -394,7 +394,6 @@ export default function CreateBlog() {
         {/* Footer Stats */}
         <div className="flex items-center justify-between text-sm text-neutral-500 pt-4 border-t">
           <span>{wordCount} words</span>
-          <span>Draft in Anonymous User</span>
         </div>
       </div>
     </div>

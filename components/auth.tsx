@@ -1,10 +1,18 @@
 import { signIn } from '@/auth';
 import { Button } from '@/components/ui/button'
+import { ChevronDown, ChevronLeft, Cross, X } from 'lucide-react';
 import Link from 'next/link'
 
 export default function LoginPage() {
     return (
-        <section className="flex max-h-screen h-screen bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent">
+        <section className="flex max-h-screen h-screen bg-zinc-50 px-4 py-16 md:py-32 dark:bg-transparent relative">
+            <Link
+                href="/"
+                aria-label="go back"
+                className="absolute top-4 left-4 p-1 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-md transition-colors z-10"
+            >
+                <X className="h-6 w-6 text-gray-600 dark:text-gray-400" />
+            </Link>
             <form
                     action={async () => {
                       "use server";
