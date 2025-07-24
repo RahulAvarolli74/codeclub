@@ -12,7 +12,6 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover"
-import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar"
 import { useSession } from "next-auth/react"
 import { usePathname } from "next/navigation"
 import { ModeToggle } from "./theme-toggle"
@@ -87,7 +86,7 @@ export default function Component() {
           </div>
           {/* Main nav */}
           <div className="flex items-center gap-6">
-            <a href="/explore" className="text-primary hover:text-primary/90">
+            <a href="/" className="text-primary hover:text-primary/90">
               {"<codeclub />"}
             </a>
             {/* Navigation menu */}
