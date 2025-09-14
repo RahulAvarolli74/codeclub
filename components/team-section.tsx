@@ -1,72 +1,94 @@
 const members = [
     {
-        name: 'Bhupindar',
-        role: 'Creator',
-        avatar: '/crystalMan.jpg',
+        name: 'Harsh Goyal',
+        role: 'Mentor',
+        avatar: '/team/harsh.jpg',
     },
     {
-        name: 'Batman',
-        role: 'Frontend Dev',
-        avatar: '/crystalMan.jpg',
+        name: 'Anirudh H',
+        role: 'Mentor',
+        avatar: '/team/Anirudh.jpg',
     },
     {
-        name: 'Spiderman',
-        role: 'Frontend Dev',
-        avatar: '/crystalMan.jpg',
+        name: 'Nikhil B',
+        role: 'Mentor',
+        avatar: '/team/nikhil.jpg',
     },
     {
-        name: 'Binod',
-        role: 'Backend Dev',
-        avatar: '/crystalMan.jpg',
+        name: 'Sanjana',
+        role: 'Mentor',
+        avatar: '/team/Sanjana.jpg',
+    },
+    {
+        name: 'Rohit M',
+        role: 'Mentor',
+        avatar: '/team/Rohit.jpg',
+    },
+    {
+        name: 'Tarun B',
+        role: 'Mentor',
+        avatar: '/team/tarun.png',
+    },
+    {
+        name: 'Ansh S',
+        role: 'Mentor',
+        avatar: '/team/Ansh.jpg',
+    },
+     {
+        name: 'Vishruth H',
+        role: 'President',
+        avatar: '/team/vishruth.jpeg',
+    },
+    {
+        name: 'Pratham K',
+        role: 'Lead',
+        avatar: '/team/kt.jpg',
+    },
+    {
+        name: 'Anaga',
+        role: 'Lead',
+        avatar: '/team/kt.jpg',
+    },
+    {
+        name: 'Sairam',
+        role: 'Lead',
+        avatar: '/team/sairam.jpeg',
+    },
+    {
+        name: 'Shivanand',
+        role: 'Lead',
+        avatar: '/team/shiva.png',
     },
 ]
 
 export default function TeamSection() {
     return (
-        <section className="py-12 md:py-32" id="team">
-            <div className="mx-auto max-w-3xl px-8 lg:px-0">
-                <h2 className="mb-8 text-4xl font-bold md:mb-16 lg:text-5xl">Our team</h2>
-
-                <div>
-                    <h3 className="mb-6 text-lg font-medium">Leads</h3>
-                    <div className="grid grid-cols-2 gap-4 border-t py-6 md:grid-cols-4">
+        <section id="team" className="bg-gray-50 md:py-32 dark:bg-transparent">
+            <div className="mx-auto max-w-5xl border-t px-6">
+                <span className="text-3xl font-bold -ml-6 -mt-3.5 block w-max bg-gray-50 px-6 dark:bg-gray-950">Team</span>
+                
+                <div className="mt-12 md:mt-24">
+                    <div className="grid gap-x-6 gap-y-12 sm:grid-cols-2 lg:grid-cols-4">
                         {members.map((member, index) => (
-                            <div key={index}>
-                                <div className="bg-background size-20 rounded-full border p-0.5 shadow shadow-zinc-950/5">
-                                    <img className="aspect-square rounded-full object-cover" src={member.avatar} alt={member.name} height="460" width="460" loading="lazy" />
+                            <div
+                                key={index}
+                                className="group overflow-hidden">
+                                <img
+                                    className="h-80 w-full rounded-md object-cover object-top grayscale-75 transition-all duration-500 hover:grayscale-0 group-hover:h-[21.5rem] group-hover:rounded-xl"
+                                    src={member.avatar}
+                                    alt="team member"
+                                    width="826"
+                                    height="1239"
+                                />
+                                <div className="px-2 pt-2 sm:pb-0 sm:pt-4">
+                                    <div className="flex justify-between">
+                                        <h3 className="text-base font-medium transition-all duration-500 group-hover:tracking-wider">{member.name}</h3>
+                                        <span className="text-xs">_0{index + 1}</span>
+                                    </div>
+                                    <div className="mt-1 flex items-center justify-between">
+                                        <span className="text-muted-foreground inline-block text-sm transition duration-300">{member.role}</span>
+                                    </div>
                                 </div>
-                                <span className="mt-2 block text-sm">{member.name}</span>
-                                <span className="text-muted-foreground block text-xs">{member.role}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="mt-6">
-                    <h3 className="mb-6 text-lg font-medium">QFAT</h3>
-                    <div data-rounded="full" className="grid grid-cols-2 gap-4 border-t py-6 md:grid-cols-4">
-                        {members.map((member, index) => (
-                            <div key={index}>
-                                <div className="bg-background size-20 rounded-full border p-0.5 shadow shadow-zinc-950/5">
-                                    <img className="aspect-square rounded-full object-cover" src={member.avatar} alt={member.name} height="460" width="460" loading="lazy" />
-                                </div>
-                                <span className="mt-2 block text-sm">{member.name}</span>
-                                <span className="text-muted-foreground block text-xs">{member.role}</span>
-                            </div>
-                        ))}
-                    </div>
-                </div>
-
-                <div className="mt-6">
-                    <h3 className="mb-6 text-lg font-medium">Media</h3>
-                    <div data-rounded="full" className="grid grid-cols-2 gap-4 border-t py-6 md:grid-cols-4">
-                        {members.map((member, index) => (
-                            <div key={index}>
-                                <div className="bg-background size-20 rounded-full border p-0.5 shadow shadow-zinc-950/5">
-                                    <img className="aspect-square rounded-full object-cover" src={member.avatar} alt={member.name} height="460" width="460" loading="lazy" />
-                                </div>
-                                <span className="mt-2 block text-sm">{member.name}</span>
-                                <span className="text-muted-foreground block text-xs">{member.role}</span>
                             </div>
                         ))}
                     </div>

@@ -143,14 +143,14 @@ const AppComponent = () => {
                             <span className="text-foreground align-baseline text-xl font-medium">121</span>
                             <span className="text-muted-foreground text-xs">Questions</span>
                         </div>
-                        <div className="flex h-5 items-center rounded bg-gradient-to-l from-emerald-400 to-indigo-600 px-2 text-xs text-white">2024</div>
+                        <div className="flex h-5 items-center rounded bg-gradient-to-l from-emerald-400 to-indigo-600 px-2 text-xs text-white">Level 1</div>
                     </div>
                     <div className="space-y-1">
                         <div className="space-x-1">
                             <span className="text-foreground align-baseline text-xl font-medium">70</span>
                             <span className="text-muted-foreground text-xs">Questions</span>
                         </div>
-                        <div className="text-foreground bg-muted flex h-5 w-2/3 items-center rounded px-2 text-xs dark:bg-white/20">2023</div>
+                        <div className="text-foreground bg-muted flex h-5 w-2/3 items-center rounded px-2 text-xs dark:bg-white/20">Level 2</div>
                     </div>
                 </div>
             </div>
