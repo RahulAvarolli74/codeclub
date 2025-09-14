@@ -22,7 +22,7 @@ const members = [
     {
         name: 'Rohit M',
         role: 'Mentor',
-        avatar: '/team/Rohit.jpg',
+        avatar: '/team/Rohit.JPG',
     },
     {
         name: 'Tarun B',
