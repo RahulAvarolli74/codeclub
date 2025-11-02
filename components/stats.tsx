@@ -17,7 +17,7 @@ export default function StatsSection() {
                         <p>Daily Problems Delivered</p>
                     </div>
                     <div className="space-y-4">
-                        <div className="text-5xl font-bold">15+</div>
+                        <div className="text-5xl font-bold">40+</div>
                         <p>Events Conducted</p>
                     </div>
                 </div>

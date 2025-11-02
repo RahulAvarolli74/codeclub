@@ -122,7 +122,6 @@ export default function InternsPage() {
 
   return (
     <>
-      <HeroHeader />
       <div className="min-h-screen w-full relative bg-black">
         {/* Ocean Abyss Background with Top Glow */}
         <div
@@ -147,7 +146,7 @@ export default function InternsPage() {
               Selected Interns
             </h1>
             <p className="text-xl sm:text-2xl text-muted-foreground max-w-2xl mx-auto">
-              Congratulations to all the brilliant minds joining us this year
+              Congratulations to all those joining us this year
             </p>
           </div>
         </div>

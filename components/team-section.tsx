@@ -45,7 +45,7 @@ const members = [
         avatar: '/team/kt.jpg',
     },
     {
-        name: 'Anaga',
+        name: 'Anagha',
         role: 'Lead',
         avatar: '/team/anaga.jpg',
     },

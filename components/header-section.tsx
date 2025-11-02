@@ -42,6 +42,8 @@ export default async function HeroSection() {
     return (
         <>
             <ResultsBanner />
+            {/* Spacer for fixed banner */}
+            <div className="h-[52px] md:h-[44px]" />
             <HeroHeader />
 
             <main className="overflow-hidden [--color-primary-foreground:var(--color-white)] [--color-primary:var(--color-green-600)]">
