@@ -27,7 +27,7 @@ export function CodeforcesConnect() {
         setIsOpen(false)
         toast.success(`Codeforces handle "${handle}" verified successfully!`)
         setHandle("") 
-        router.refresh()
+        window.location.reload()
       } else {
         toast.error("Failed to connect handle. Please try again.")
       }

@@ -8,6 +8,7 @@ import { ArrowRightIcon } from 'lucide-react'
 import { auth } from '@/auth'
 import Link from 'next/link'
 import { Bricolage_Grotesque } from 'next/font/google'
+import ResultsBanner from '@/components/results-banner'
 
 const fontHeading = Bricolage_Grotesque({
   subsets: ["latin"],
@@ -40,6 +41,7 @@ export default async function HeroSection() {
     const isLoggedIn = !!session?.user;
     return (
         <>
+            <ResultsBanner />
             <HeroHeader />
 
             <main className="overflow-hidden [--color-primary-foreground:var(--color-white)] [--color-primary:var(--color-green-600)]">
