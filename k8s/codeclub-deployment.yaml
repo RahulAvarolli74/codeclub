@@ -13,12 +13,35 @@ spec:
         app: codeclub-app
     spec:
       containers:
+        - apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: codeclub-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: codeclub-app
+  template:
+    metadata:
+      labels:
+        app: codeclub-app
+    spec:
+      containers:
         - name: codeclub-app
-          image: codeclub-app:latest # Make sure to build this image in minikube
-          imagePullPolicy: Never # Use local image
+          image: codeclub-app:latest
+          imagePullPolicy: Never
           ports:
             - containerPort: 3000
+  
+          resources:
+            requests:
+              cpu: "200m"     # Request 0.2 CPU core to start
+              memory: "128Mi"
+            limits:
+              cpu: "500m"     # Cap it at 0.5 CPU core
+              memory: "512Mi"
+
           envFrom:
             - secretRef:
                 name: codeclub-secrets
-          # Optional: Init container for migrations if needed, but for now assuming the CMD handles it or manual job
